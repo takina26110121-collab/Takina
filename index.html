@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的網頁程式作品集入口</title>
+    <!-- 引入 Google Fonts 可愛圓潤字體 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mochiyom+Pop+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==================== 基礎與變數設定 ==================== */
+        :root {
+            --bg-grad-1: #ffe6f2;
+            --bg-grad-2: #e8f4ff;
+            --bg-grad-3: #fff3e0;
+            --primary-pink: #ff85a1;
+            --primary-purple: #b39ddb;
+            --card-unlocked-bg: #ffffff;
+            --card-locked-bg: #f0f0f5;
+            --text-dark: #5a4b5c;
+            --text-muted: #a099a8;
+            --shadow-pop: 0 10px 25px rgba(255, 133, 161, 0.25);
+            --shadow-card: 0 8px 20px rgba(180, 160, 200, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', 'Mochiyom Pop One', sans-serif;
+            background: linear-gradient(135deg, var(--bg-grad-1), var(--bg-grad-2), var(--bg-grad-3));
+            background-size: 300% 300%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 浮動氣泡裝飾 */
+        .bg-bubbles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            animation: floatUp 8s infinite ease-in-out;
+        }
+
+        .bubble:nth-child(1) { width: 60px; height: 60px; left: 10%; animation-duration: 7s; }
+        .bubble:nth-child(2) { width: 90px; height: 90px; left: 85%; animation-duration: 9s; animation-delay: 1s; }
+        .bubble:nth-child(3) { width: 40px; height: 40px; left: 70%; animation-duration: 6s; animation-delay: 2s; }
+        .bubble:nth-child(4) { width: 75px; height: 75px; left: 20%; animation-duration: 10s; animation-delay: 3s; }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0.8); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ==================== 個人資料區塊 ==================== */
+        .profile-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 30px;
+            border: 4px solid #ffffff;
+            box-shadow: var(--shadow-pop);
+            text-align: center;
+            width: 100%;
+            max-width: 450px;
+            margin-bottom: 40px;
+            position: relative;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            animation: bounceSoft 3s ease-in-out infinite;
+        }
+
+        @keyframes bounceSoft {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .badge-level {
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            color: #fff;
+            font-weight: 900;
+            font-size: 0.85rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 2px solid #fff;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }
+
+        .user-name {
+            font-family: 'Mochiyom Pop One', sans-serif;
+            font-size: 1.8rem;
+            color: #524364;
+            margin-bottom: 5px;
+        }
+
+        .user-title {
+            font-size: 0.95rem;
+            color: #8c7b99;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        /* 進度條 */
+        .progress-box {
+            background: #f0e6f5;
+            border-radius: 15px;
+            height: 16px;
+            width: 80%;
+            margin: 0 auto;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid #fff;
+        }
+
+        .progress-bar {
+            width: 12.5%; /* 2/16 = 12.5% */
+            height: 100%;
+            background: linear-gradient(90deg, #ff85a1, #b39ddb);
+            border-radius: 15px;
+            transition: width 1s ease;
+        }
+
+        .progress-text {
+            font-size: 0.75rem;
+            color: #7d6b8d;
+            margin-top: 6px;
+            font-weight: bold;
+        }
+
+        /* ==================== 關卡網格區塊 ==================== */
+        .grid-title {
+            font-size: 1.4rem;
+            color: #524364;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 900;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
+
+        /* 手機版優化：每行雙排呈現 */
+        @media (max-width: 480px) {
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+        }
+
+        /* 關卡卡片通用 */
+        .card {
+            border-radius: 24px;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            position: relative;
+            box-shadow: var(--shadow-card);
+            border: 3px solid #ffffff;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-height: 140px;
+            user-select: none;
+        }
+
+        /* 已解鎖卡片樣式 */
+        .card.unlocked {
+            background: var(--card-unlocked-bg);
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .card.unlocked::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.6),
+                transparent
+            );
+            transform: rotate(45deg) translateY(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .card.unlocked:hover::before {
+            transform: rotate(45deg) translateY(100%);
+        }
+
+        .card.unlocked:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(255, 133, 161, 0.3);
+            border-color: #ff85a1;
+        }
+
+        .card.unlocked:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+
+        .card.unlocked .icon {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+            transition: transform 0.3s ease;
+        }
+
+        .card.unlocked:hover .icon {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .card.unlocked .week-badge {
+            background: #ffe6ed;
+            color: #ff477e;
+            font-size: 0.75rem;
+            font-weight: 900;
+            padding: 3px 10px;
+            border-radius: 12px;
+            margin-bottom: 6px;
+        }
+
+        .card.unlocked .card-title {
+            color: #4a3e56;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        /* 未解鎖卡片樣式 */
+        .card.locked {
+            background: var(--card-locked-bg);
+            cursor: not-allowed;
+            border-color: #e2e2ec;
+            opacity: 0.85;
+        }
+
+        .card.locked:hover {
+            transform: translateY(-3px);
+            background: #e8e8f0;
+        }
+
+        .card.locked .lock-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            filter: grayscale(100%);
+            opacity: 0.6;
+            transition: transform 0.3s ease;
+        }
+
+        .card.locked:hover .lock-icon {
+            transform: rotate(-10deg) scale(1.1);
+        }
+
+        .card.locked .week-badge {
+            background: #dcdce5;
+            color: #8e8e9e;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 12px;
+            margin-bottom: 6px;
+        }
+
+        .card.locked .card-title {
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        /* 點擊鎖定卡片的震動動畫 */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+            border-color: #ff85a1 !important;
+        }
+
+        /* 頁尾頁腳 */
+        footer {
+            margin-top: 50px;
+            color: #8c7b99;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 背景動態氣泡 -->
+    <div class="bg-bubbles">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+
+    <div class="container">
+        <!-- 1. 個人資料大頭貼與名字區塊 -->
+        <div class="profile-card">
+            <div class="avatar-container">
+                <!-- 預設假圖片大頭貼 (可更換連結) -->
+                <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=CuteStudent" alt="大頭貼" class="avatar">
+                <span class="badge-level">LV.2</span>
+            </div>
+            <h1 class="user-name">網真學員 Portfolio</h1>
+            <p class="user-title">✨ 網頁前端探險家 ✨</p>
+
+            <!-- 闖關進度條 -->
+            <div class="progress-box">
+                <div class="progress-bar"></div>
+            </div>
+            <p class="progress-text">關卡完成度：2 / 16 (12.5%)</p>
+        </div>
+
+        <!-- 關卡標題 -->
+        <div class="grid-title">
+            <span>🎮</span> 課程任務關卡地圖
+        </div>
+
+        <!-- 2. 16個關卡按鈕網格 -->
+        <div class="grid-container">
+            
+            <!-- 按鈕 1：已解鎖 -->
+            <a href="w1/index.html" class="card unlocked">
+                <span class="week-badge">WEEK 01</span>
+                <span class="icon">🎴</span>
+                <span class="card-title">Week 1-數位名片</span>
+            </a>
+
+            <!-- 按鈕 2：已解鎖 -->
+            <a href="w2/index.html" class="card unlocked">
+                <span class="week-badge">WEEK 02</span>
+                <span class="icon">🍱</span>
+                <span class="card-title">Week 2-今天吃甚麼？</span>
+            </a>
+
+            <!-- 按鈕 3 ~ 16：未解鎖灰色狀態 -->
+            <a class="card locked" onclick="triggerLockedAnimation(this)">
+                <span class="week-badge">WEEK 03</span>
+                <span class="lock-icon">🔒</span>
+                <span class="card-title">未解鎖關卡</span>
+            </a>
+
+            <a class="card locked" onclick="triggerLockedAnimation(this)">
+                <span class="week-badge">WEEK 04</span>
+                <span class="lock-icon">🔒</span>
+                <span class="card-title">未解鎖關卡</span>
+            </a>
+
+            <a class="card locked" onclick="triggerLockedAnimation(this)">
+                <span class="week-badge">WEEK 05</span>
+                <span class="lock-icon">🔒</span>
+                <span class="card-title">未解鎖關卡</span>
+            </a>
+
+            <a class="card locked" onclick="triggerLockedAnimation(this)">
+                <span class="week-badge">WEEK 06</span>
+                <span class="lock-icon">🔒</span>
+                <span class="card-title">未解鎖關卡</span>
+            </a>
+
+            <a class="card locked" onclick="triggerLockedAnimation(this)">
+                <span class="week-badge">WEEK 07</span>
+                <span class="lock-icon">🔒</span>
+                <span class="card-title">未解鎖關卡</span>
+            </a>
+
+            <a class="card locked" onclick="triggerLockedAnimation(this)">
+                <span class="week-badge">WEEK 08</span>
+                <span class="lock-icon">🔒</span>
+                <span class="card-title">未解鎖關卡</span>
+            </a>
+
+            <a class="card locked" onclick="triggerLockedAnimation(this)">
+                <span class="week-badge">WEEK 09</span>
+                <span class="lock-icon">🔒</span>
+                <span class="card-title">未解鎖關卡</span>
+            </a>
+
+            <a class="card locked" onclick="triggerLockedAnimation(this)">
+                <span class="week-badge">WEEK 10</span>
+                <span class="lock-icon">🔒</span>
+                <span class="card-title">未解鎖關卡</span>
+            </a>
+
+            <a class="card locked" onclick="triggerLockedAnimation(this)">
+                <span class="week-badge">WEEK 11</span>
+                <span class="lock-icon">🔒</span>
+                <span class="card-title">未解鎖關卡</span>
+            </a>
+
+            <a class="card locked" onclick="triggerLockedAnimation(this)">
+                <span class="week-badge">WEEK 12</span>
+                <span class="lock-icon">🔒</span>
+                <span class="card-title">未解鎖關卡</span>
+            </a>
+
+            <a class="card locked" onclick="triggerLockedAnimation(this)">
+                <span class="week-badge">WEEK 13</span>
+                <span class="lock-icon">🔒</span>
+                <span class="card-title">未解鎖關卡</span>
+            </a>
+
+            <a class="card locked" onclick="triggerLockedAnimation(this)">
+                <span class="week-badge">WEEK 14</span>
+                <span class="lock-icon">🔒</span>
+                <span class="card-title">未解鎖關卡</span>
+            </a>
+
+            <a class="card locked" onclick="triggerLockedAnimation(this)">
+                <span class="week-badge">WEEK 15</span>
+                <span class="lock-icon">🔒</span>
+                <span class="card-title">未解鎖關卡</span>
+            </a>
+
+            <a class="card locked" onclick="triggerLockedAnimation(this)">
+                <span class="week-badge">WEEK 16</span>
+                <span class="lock-icon">🔒</span>
+                <span class="card-title">未解鎖關卡</span>
+            </a>
+
+        </div>
+
+        <footer>
+            © 2026 網頁程式設計課程作品集 | Keep Coding & Stay Cute!
+        </footer>
+    </div>
+
+    <!-- 小腳本：點擊鎖定關卡時觸發趣味搖晃動畫 -->
+    <script>
+        function triggerLockedAnimation(element) {
+            element.classList.remove('shake');
+            // 強制重繪以重新觸發動畫
+            void element.offsetWidth;
+            element.classList.add('shake');
+        }
+    </script>
+</body>
+</html>
