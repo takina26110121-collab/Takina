@@ -175,7 +175,7 @@
         }
 
         .progress-bar {
-            width: 18.75%; /* 3/16 = 18.75% */
+            width: 25%; /* 4/16 = 25% */
             height: 100%;
             background: linear-gradient(90deg, #ff85a1, #b39ddb);
             border-radius: 15px;
@@ -385,7 +385,7 @@
             <div class="progress-box">
                 <div class="progress-bar"></div>
             </div>
-            <p class="progress-text">關卡完成度：3 / 16 (18.75%)</p>
+            <p class="progress-text">關卡完成度：4 / 16 (25.00%)</p>
         </div>
 
         <!-- 關卡標題 -->
@@ -410,20 +410,21 @@
                 <span class="card-title">Week 2-今天吃甚麼？</span>
             </a>
 
-            <!-- 按鈕 3：已解鎖 (迷因產生器) -->
+            <!-- 按鈕 3：已解鎖 -->
             <a href="w3/index.html" class="card unlocked">
                 <span class="week-badge">WEEK 03</span>
                 <span class="icon">😂</span>
                 <span class="card-title">Week 3-迷因產生器</span>
             </a>
 
-            <!-- 按鈕 4 ~ 16：未解鎖灰色狀態 -->
-            <a class="card locked" onclick="triggerLockedAnimation(this)">
+            <!-- 按鈕 4：已解鎖 (悄悄話) -->
+            <a href="w4/index.html" class="card unlocked">
                 <span class="week-badge">WEEK 04</span>
-                <span class="lock-icon">🔒</span>
-                <span class="card-title">未解鎖關卡</span>
+                <span class="icon">💌</span>
+                <span class="card-title">Week 4-悄悄話</span>
             </a>
 
+            <!-- 按鈕 5 ~ 16：未解鎖灰色狀態 -->
             <a class="card locked" onclick="triggerLockedAnimation(this)">
                 <span class="week-badge">WEEK 05</span>
                 <span class="lock-icon">🔒</span>
