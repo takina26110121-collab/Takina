@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的網頁程式作品集 & 雲端心電感應</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rosegold: {
+                            50: '#FDF7F6',
+                            100: '#F9ECE9',
+                            200: '#F2D3CC',
+                            300: '#E7B4A7',
+                            400: '#D78B7D',
+                            500: '#B76E79',
+                            600: '#9E525D',
+                            700: '#823D47',
+                            800: '#683139',
+                            900: '#4A2127',
+                        },
+                        royal: {
+                            dark: '#140A18',
+                            card: '#221229',
+                            gold: '#F3C667'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <!-- Google Fonts: 圓潤字體與 Cinzel 皇家貴族字體 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Mochiyom+Pop+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-grad-1: #ffe6f2;
+            --bg-grad-2: #e8f4ff;
+            --bg-grad-3: #fff3e0;
+            --primary-pink: #ff85a1;
+            --primary-purple: #b39ddb;
+            --card-unlocked-bg: #ffffff;
+            --card-locked-bg: #f0f0f5;
+            --text-dark: #5a4b5c;
+            --text-muted: #a099a8;
+            --shadow-pop: 0 10px 25px rgba(255, 133, 161, 0.25);
+            --shadow-card: 0 8px 20px rgba(180, 160, 200, 0.15);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: linear-gradient(135deg, var(--bg-grad-1), var(--bg-grad-2), var(--bg-grad-3));
+            background-size: 300% 300%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .font-cinzel { font-family: 'Cinzel', serif; }
+
+        /* 3D 翻牌動畫相關 CSS */
+        .perspective-1000 { perspective: 1000px; }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+        .card-inner.is-flipped { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 1rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+
+        .btn-rosegold {
+            background: linear-gradient(135deg, #E7B4A7 0%, #B76E79 50%, #823D47 100%);
+            box-shadow: 0 4px 15px rgba(183, 110, 121, 0.35);
+            transition: all 0.3s ease;
+        }
+        .btn-rosegold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(183, 110, 121, 0.55);
+        }
+        .royal-border { border: 1px solid rgba(243, 198, 103, 0.3); }
+
+        /* 浮動氣泡裝飾 */
+        .bg-bubbles {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden;
+        }
+        .bubble {
+            position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.4); animation: floatUp 8s infinite ease-in-out;
+        }
+        .bubble:nth-child(1) { width: 60px; height: 60px; left: 10%; animation-duration: 7s; }
+        .bubble:nth-child(2) { width: 90px; height: 90px; left: 85%; animation-duration: 9s; animation-delay: 1s; }
+        .bubble:nth-child(3) { width: 40px; height: 40px; left: 70%; animation-duration: 6s; animation-delay: 2s; }
+        .bubble:nth-child(4) { width: 75px; height: 75px; left: 20%; animation-duration: 10s; animation-delay: 3s; }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0.8); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+
+        .container-box { max-width: 1000px; width: 100%; z-index: 1; display: flex; flex-direction: column; align-items: center; }
+
+        /* 個人資料卡片 */
+        .profile-card {
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); padding: 30px; border-radius: 30px; border: 4px solid #ffffff; box-shadow: var(--shadow-pop); text-align: center; width: 100%; max-width: 450px; margin-bottom: 40px;
+        }
+        .avatar-container { position: relative; width: 120px; height: 120px; margin: 0 auto 15px; }
+        .avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 5px solid #fff; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
+        .badge-level {
+            position: absolute; bottom: -5px; right: -5px; background: linear-gradient(45deg, #ff9a9e, #fecfef); color: #fff; font-weight: 900; font-size: 0.85rem; padding: 4px 12px; border-radius: 20px; border: 2px solid #fff;
+        }
+        .user-name { font-family: 'Mochiyom Pop One', sans-serif; font-size: 1.8rem; color: #524364; margin-bottom: 5px; }
+        .user-title { font-size: 0.95rem; color: #8c7b99; font-weight: 700; margin-bottom: 15px; }
+
+        .progress-box { background: #f0e6f5; border-radius: 15px; height: 16px; width: 80%; margin: 0 auto; overflow: hidden; border: 2px solid #fff; }
+        .progress-bar { width: 31.25%; height: 100%; background: linear-gradient(90deg, #ff85a1, #b39ddb); border-radius: 15px; }
+        .progress-text { font-size: 0.75rem; color: #7d6b8d; margin-top: 6px; font-weight: bold; }
+
+        /* 關卡網格 */
+        .grid-title { font-size: 1.4rem; color: #524364; margin-bottom: 25px; display: flex; align-items: center; gap: 8px; font-weight: 900; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; width: 100%; }
+        @media (max-width: 480px) { .grid-container { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+
+        .card {
+            border-radius: 24px; padding: 20px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; position: relative; box-shadow: var(--shadow-card); border: 3px solid #ffffff; transition: all 0.3s ease; min-height: 140px; cursor: pointer; background: #ffffff;
+        }
+        .card:hover { transform: translateY(-8px) scale(1.03); box-shadow: 0 15px 30px rgba(255, 133, 161, 0.3); border-color: #ff85a1; }
+        .card.locked { background: #f0f0f5; cursor: not-allowed; border-color: #e2e2ec; opacity: 0.85; }
+        .card .icon { font-size: 2.2rem; margin-bottom: 8px; }
+        .card .week-badge { background: #ffe6ed; color: #ff477e; font-size: 0.75rem; font-weight: 900; padding: 3px 10px; border-radius: 12px; margin-bottom: 6px; }
+        .card .card-title { color: #4a3e56; font-weight: 700; font-size: 0.95rem; text-align: center; }
+        .card.locked .week-badge { background: #dcdce5; color: #8e8e9e; }
+        .card.locked .card-title { color: #a099a8; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .shake { animation: shake 0.4s ease-in-out; border-color: #ff85a1 !important; }
+    </style>
+</head>
+<body>
+
+    <!-- 浮動氣泡 -->
+    <div class="bg-bubbles">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+
+    <div class="container-box">
+        <!-- 1. 個人資料區塊 -->
+        <div class="profile-card">
+            <div class="avatar-container">
+                <img src="https://i.postimg.cc/xTHnt8J7/836468155-1120624843713953-6108202038115422160-n.jpg" alt="大頭貼" class="avatar">
+                <span class="badge-level">LV.2</span>
+            </div>
+            <h1 class="user-name">无心</h1>
+            <p class="user-title">✨ 漫展旅行家无心 ✨</p>
+            <div class="progress-box">
+                <div class="progress-bar"></div>
+            </div>
+            <p class="progress-text">關卡完成度：5 / 16 (31.25%)</p>
+        </div>
+
+        <!-- 2. 作品集主頁：關卡選擇地圖 -->
+        <div id="portfolio-view" class="w-full flex flex-col items-center">
+            <div class="grid-title"><span>🎮</span> 課程任務關卡地圖</div>
+
+            <div class="grid-container">
+                <a href="w1/index.html" class="card">
+                    <span class="week-badge">WEEK 01</span>
+                    <span class="icon">🎴</span>
+                    <span class="card-title">Week 1-數位名片</span>
+                </a>
+                <a href="w2/index.html" class="card">
+                    <span class="week-badge">WEEK 02</span>
+                    <span class="icon">🍱</span>
+                    <span class="card-title">Week 2-今天吃甚麼？</span>
+                </a>
+                <a href="w3/index.html" class="card">
+                    <span class="week-badge">WEEK 03</span>
+                    <span class="icon">😂</span>
+                    <span class="card-title">Week 3-迷因產生器</span>
+                </a>
+                <a href="w4/index.html" class="card">
+                    <span class="week-badge">WEEK 04</span>
+                    <span class="icon">💌</span>
+                    <span class="card-title">Week 4-悄悄話</span>
+                </a>
+
+                <!-- 點擊關卡 5 直接進入雲端心電感應遊戲 -->
+                <div onclick="openTelepathyGame()" class="card">
+                    <span class="week-badge">WEEK 05</span>
+                    <span class="icon">🧠</span>
+                    <span class="card-title">Week 5-雲端心電感應</span>
+                </div>
+
+                <!-- 鎖定關卡 6~16 -->
+                <a class="card locked" onclick="triggerLockedAnimation(this)"><span class="week-badge">WEEK 06</span><span class="icon">🔒</span><span class="card-title">未解鎖關卡</span></a>
+                <a class="card locked" onclick="triggerLockedAnimation(this)"><span class="week-badge">WEEK 07</span><span class="icon">🔒</span><span class="card-title">未解鎖關卡</span></a>
+                <a class="card locked" onclick="triggerLockedAnimation(this)"><span class="week-badge">WEEK 08</span><span class="icon">🔒</span><span class="card-title">未解鎖關卡</span></a>
+                <a class="card locked" onclick="triggerLockedAnimation(this)"><span class="week-badge">WEEK 09</span><span class="icon">🔒</span><span class="card-title">未解鎖關卡</span></a>
+                <a class="card locked" onclick="triggerLockedAnimation(this)"><span class="week-badge">WEEK 10</span><span class="icon">🔒</span><span class="card-title">未解鎖關卡</span></a>
+                <a class="card locked" onclick="triggerLockedAnimation(this)"><span class="week-badge">WEEK 11</span><span class="icon">🔒</span><span class="card-title">未解鎖關卡</span></a>
+                <a class="card locked" onclick="triggerLockedAnimation(this)"><span class="week-badge">WEEK 12</span><span class="icon">🔒</span><span class="card-title">未解鎖關卡</span></a>
+                <a class="card locked" onclick="triggerLockedAnimation(this)"><span class="week-badge">WEEK 13</span><span class="icon">🔒</span><span class="card-title">未解鎖關卡</span></a>
+                <a class="card locked" onclick="triggerLockedAnimation(this)"><span class="week-badge">WEEK 14</span><span class="icon">🔒</span><span class="card-title">未解鎖關卡</span></a>
+                <a class="card locked" onclick="triggerLockedAnimation(this)"><span class="week-badge">WEEK 15</span><span class="icon">🔒</span><span class="card-title">未解鎖關卡</span></a>
+                <a class="card locked" onclick="triggerLockedAnimation(this)"><span class="week-badge">WEEK 16</span><span class="icon">🔒</span><span class="card-title">未解鎖關卡</span></a>
+            </div>
+        </div>
+
+        <!-- 3. 雲端心電感應遊戲介面 (初始隱藏，點擊關卡 5 後展開) -->
+        <div id="telepathy-game-view" class="hidden w-full space-y-6">
+            <div class="flex justify-between items-center w-full max-w-4xl mx-auto border-b border-rosegold-500/30 pb-4">
+                <div>
+                    <h1 class="font-cinzel text-2xl md:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-rosegold-200 via-rosegold-400 to-royal-gold tracking-wide">
+                        ROYAL TELEPATHY
+                    </h1>
+                    <p class="text-[11px] text-rosegold-300 tracking-widest uppercase">雲端心電感應 · 皇家默契大考驗</p>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <button onclick="backToPortfolio()" class="px-3 py-1.5 bg-rosegold-800 text-xs rounded-lg text-white hover:bg-rosegold-700 transition-colors">
+                        ← 返回作品集
+                    </button>
+                    <div id="room-badge" class="hidden bg-royal-card border border-rosegold-500/50 px-3.5 py-1 rounded-full text-xs text-rosegold-200">
+                        房號: <span id="display-room-id" class="font-bold text-royal-gold font-mono text-sm">--</span>
+                    </div>
+                    <!-- 隱藏房主開關圖示 -->
+                    <button id="toggle-host-btn" type="button" onclick="toggleHostPanel()" title="切換房主控制台" 
+                            class="opacity-60 hover:opacity-100 transition-opacity p-2 text-rosegold-300 text-xl cursor-pointer select-none">
+                        👑
+                    </button>
+                </div>
+            </div>
+
+            <!-- 登入與建立房間大廳 -->
+            <div id="view-login" class="max-w-md mx-auto bg-royal-card/95 backdrop-blur-md p-8 rounded-2xl royal-border shadow-2xl text-rosegold-100">
+                <div class="text-center mb-6">
+                    <span class="text-xs font-cinzel text-royal-gold tracking-widest uppercase">Welcome To The Royal Court</span>
+                    <h2 class="text-2xl font-bold text-rosegold-100 mt-1">加入心電感應大廳</h2>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs text-rosegold-300 mb-1 font-medium">您的尊名 (玩家暱稱)</label>
+                        <input type="text" id="input-player-name" placeholder="請輸入名字" 
+                               class="w-full bg-royal-dark border border-rosegold-500/40 rounded-xl px-4 py-3 text-rosegold-100 focus:outline-none focus:border-rosegold-400">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-rosegold-300 mb-1 font-medium">房間代碼 (填寫或生成新房號)</label>
+                        <div class="flex space-x-2">
+                            <input type="text" id="input-room-id" placeholder="例如: 888" 
+                                   class="w-full bg-royal-dark border border-rosegold-500/40 rounded-xl px-4 py-3 text-rosegold-100 focus:outline-none focus:border-rosegold-400 uppercase font-mono tracking-wider">
+                            <button type="button" onclick="generateRandomRoom()" 
+                                    class="px-4 bg-rosegold-900 border border-rosegold-500/50 text-xs rounded-xl text-rosegold-200 hover:bg-rosegold-800 whitespace-nowrap">
+                                隨機房號
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="joinRoom()" class="w-full btn-rosegold font-bold py-3.5 rounded-xl text-royal-dark text-base tracking-wider mt-4">
+                        進入遊戲房間
+                    </button>
+                </div>
+            </div>
+
+            <!-- 遊戲進行介面 -->
+            <div id="view-game" class="hidden space-y-6 max-w-4xl mx-auto w-full">
+                <div class="text-center bg-royal-card/80 p-6 rounded-2xl royal-border backdrop-blur-md relative overflow-hidden text-rosegold-100">
+                    <span class="text-xs font-cinzel tracking-widest text-rosegold-400 uppercase">Current Question</span>
+                    <h2 id="display-question" class="text-2xl md:text-3xl font-black text-royal-gold mt-2 tracking-wide">
+                        等待房主出題中...
+                    </h2>
+                </div>
+
+                <div id="answer-input-box" class="max-w-md mx-auto flex space-x-2">
+                    <input type="text" id="input-my-answer" placeholder="寫下你的默契答案..." 
+                           class="flex-1 bg-royal-dark border border-rosegold-500/50 rounded-xl px-4 py-3 text-rosegold-100 focus:outline-none focus:border-rosegold-400">
+                    <button type="button" onclick="submitAnswer()" class="btn-rosegold font-bold px-6 py-3 rounded-xl text-royal-dark whitespace-nowrap">
+                        送出答案
+                    </button>
+                </div>
+
+                <!-- 3D 翻牌動畫展示區 -->
+                <div id="cards-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pt-2"></div>
+            </div>
+
+            <!-- 隱藏房主控制台 -->
+            <div id="host-panel" class="hidden max-w-4xl mx-auto w-full mb-6 bg-rosegold-950/95 border border-royal-gold/60 p-5 rounded-2xl shadow-2xl backdrop-blur-md text-rosegold-100">
+                <div class="flex justify-between items-center mb-4 pb-2 border-b border-rosegold-500/30">
+                    <h3 class="text-sm font-bold text-royal-gold flex items-center gap-2">
+                        <span>👑</span> 尊貴房主控制台 (Hidden Host Console)
+                    </h3>
+                    <span class="text-xs text-rosegold-300">目前控制房號: <b id="host-room-id" class="text-white font-mono">--</b></span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="md:col-span-2 flex gap-2">
+                        <input type="text" id="host-question-input" placeholder="請輸入本次心電感應題目..." 
+                               class="flex-1 bg-royal-dark border border-rosegold-500/50 rounded-lg px-3 py-2 text-sm text-rosegold-100 focus:outline-none">
+                        <button type="button" onclick="hostSetQuestion()" class="bg-rosegold-700 hover:bg-rosegold-600 text-white px-4 py-2 text-sm rounded-lg font-medium border border-rosegold-500/50 whitespace-nowrap">
+                            出題開局
+                        </button>
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="hostReveal()" class="flex-1 bg-gradient-to-r from-amber-500 to-royal-gold text-royal-dark font-bold px-4 py-2 text-sm rounded-lg hover:brightness-110 whitespace-nowrap">
+                            ✨ 萬眾開牌 ✨
+                        </button>
+                        <button type="button" onclick="hostReset()" class="bg-gray-800 hover:bg-gray-700 text-rosegold-200 px-3 py-2 text-sm rounded-lg border border-gray-700 whitespace-nowrap">
+                            重置
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            © 2026 網頁程式設計課程作品集 | Keep Coding & Stay Cute!
+        </footer>
+    </div>
+
+    <!-- JS 邏輯腳本 -->
+    <script>
+        // 進入/離開關卡 5 畫面切換
+        function openTelepathyGame() {
+            document.getElementById('portfolio-view').classList.add('hidden');
+            document.getElementById('telepathy-game-view').classList.remove('hidden');
+        }
+
+        function backToPortfolio() {
+            if (pollingTimer) clearInterval(pollingTimer);
+            document.getElementById('telepathy-game-view').classList.add('hidden');
+            document.getElementById('portfolio-view').classList.remove('hidden');
+        }
+
+        function triggerLockedAnimation(element) {
+            element.classList.remove('shake');
+            void element.offsetWidth;
+            element.classList.add('shake');
+        }
+
+        // --- 雲端心電感應遊戲邏輯 ---
+        const SHEET_NAME = 'TelepathyData';
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzannFgZZeXggYHORNMX-I6FICwq4X5o0UO-VKKSM2-p5AV_B1AixRsoSBNDVheOnEN/exec";
+
+        let roomId = "";
+        let playerName = "";
+        let pollingTimer = null;
+
+        function generateRandomRoom() {
+            const code = Math.floor(1000 + Math.random() * 9000).toString();
+            document.getElementById('input-room-id').value = code;
+        }
+
+        function toggleHostPanel() {
+            const panel = document.getElementById('host-panel');
+            if (panel) {
+                panel.classList.toggle('hidden');
+            }
+        }
+
+        function joinRoom() {
+            const nameInput = document.getElementById('input-player-name').value.trim();
+            let roomInput = document.getElementById('input-room-id').value.trim();
+
+            if (!nameInput) {
+                alert("請輸入您的尊名！");
+                return;
+            }
+
+            if (!roomInput) {
+                roomInput = "8888";
+            }
+
+            playerName = nameInput;
+            roomId = roomInput.toUpperCase();
+
+            document.getElementById('display-room-id').innerText = roomId;
+            document.getElementById('host-room-id').innerText = roomId;
+            document.getElementById('room-badge').classList.remove('hidden');
+
+            document.getElementById('view-login').classList.add('hidden');
+            document.getElementById('view-game').classList.remove('hidden');
+
+            fetchGameState();
+            if (pollingTimer) clearInterval(pollingTimer);
+            pollingTimer = setInterval(fetchGameState, 2000);
+        }
+
+        async function fetchGameState() {
+            if (!roomId) return;
+            try {
+                const res = await fetch(`${GAS_API_URL}?room=${encodeURIComponent(roomId)}`);
+                const data = await res.json();
+                renderGame(data);
+            } catch (err) {
+                console.error("輪詢擷取資料失敗:", err);
+            }
+        }
+
+        async function postGAS(payload) {
+            try {
+                payload.room = roomId;
+                await fetch(GAS_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                fetchGameState();
+            } catch (err) {
+                console.error("發送請求失敗:", err);
+            }
+        }
+
+        function renderGame(data) {
+            const { status, question, answers } = data;
+            
+            document.getElementById('display-question').innerText = question || "等待房主出題中...";
+
+            const answerBox = document.getElementById('answer-input-box');
+            if (status === 'playing') {
+                answerBox.classList.remove('hidden');
+            } else {
+                answerBox.classList.add('hidden');
+            }
+
+            const container = document.getElementById('cards-container');
+            container.innerHTML = '';
+
+            const playerNames = Object.keys(answers || {});
+            
+            if (playerNames.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center text-rosegold-300/60 py-12">目前房內尚無作答紀錄...</div>`;
+                return;
+            }
+
+            playerNames.forEach(name => {
+                const answerText = answers[name];
+                const isRevealed = (status === 'revealed');
+                const isMe = (name === playerName);
+
+                const cardHTML = `
+                    <div class="h-44 perspective-1000">
+                        <div class="card-inner ${isRevealed ? 'is-flipped' : ''} shadow-2xl">
+                            <!-- 正面 -->
+                            <div class="card-front bg-gradient-to-br from-royal-card via-rosegold-950 to-royal-dark border ${isMe ? 'border-royal-gold' : 'border-rosegold-500/40'} p-4 flex flex-col justify-between items-center text-center">
+                                <div class="w-full flex justify-between items-center">
+                                    <span class="text-[10px] ${isMe ? 'text-royal-gold font-bold' : 'text-rosegold-400'}">${isMe ? '★ 本人' : '玩家'}</span>
+                                    <span class="w-2.5 h-2.5 rounded-full ${answerText ? 'bg-emerald-400 shadow-[0_0_8px_#34d399]' : 'bg-gray-600'}"></span>
+                                </div>
+                                <div class="my-auto">
+                                    <h4 class="font-bold text-lg text-rosegold-100 tracking-wide">${name}</h4>
+                                    <p class="text-xs text-rosegold-400 mt-1">${answerText ? '已鎖定答案' : '思考中...'}</p>
+                                </div>
+                                <div class="text-[10px] text-royal-gold/60 font-cinzel tracking-widest">ROYAL CARD</div>
+                            </div>
+                            
+                            <!-- 背面 -->
+                            <div class="card-back bg-gradient-to-br from-rosegold-700 via-rosegold-600 to-rosegold-800 border-2 border-royal-gold p-4 flex flex-col justify-between items-center text-center">
+                                <span class="text-[11px] text-royal-gold font-bold tracking-wider uppercase">${name} 的答案</span>
+                                <div class="my-auto w-full px-2">
+                                    <p class="text-xl font-black text-white drop-shadow-md break-words">${answerText}</p>
+                                </div>
+                                <div class="text-[9px] text-rosegold-200/60 tracking-widest font-cinzel">TELEPATHY MATCH</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHTML;
+            });
+        }
+
+        function submitAnswer() {
+            const ans = document.getElementById('input-my-answer').value.trim();
+            if (!ans) {
+                alert("請填寫答案！");
+                return;
+            }
+            postGAS({
+                action: "submit_answer",
+                playerName: playerName,
+                answer: ans
+            });
+            document.getElementById('input-my-answer').value = '';
+            alert("答案已成功傳送！等待房主宣佈開牌。");
+        }
+
+        function hostSetQuestion() {
+            const q = document.getElementById('host-question-input').value.trim();
+            if (!q) {
+                alert("請輸入題目！");
+                return;
+            }
+            postGAS({
+                action: "set_question",
+                question: q
+            });
+        }
+
+        function hostReveal() {
+            postGAS({ action: "reveal" });
+        }
+
+        function hostReset() {
+            if (confirm("確定要重置目前房間的狀態嗎？")) {
+                postGAS({ action: "reset" });
+            }
+        }
+    </script>
+</body>
+</html>
